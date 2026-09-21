@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Public Paper MCP package v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "package_version",
+    "name",
+    "summary",
+    "repo_url",
+    "commit",
+    "doi",
+    "paper_title",
+    "tools",
+    "python",
+    "license",
+    "demo"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "package_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "repo_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?<!\\.git)$",
+      "description": "Canonical https://github.com/owner/repo URL of the upstream code; no .git suffix, no clone URL."
+    },
+    "commit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "doi": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^10\\.[0-9]{4,9}/\\S*[A-Za-z0-9)]$",
+      "description": "DOI of the paper, without trailing punctuation. May be null when no DOI exists; paper_title stays required."
+    },
+    "paper_title": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "Title from the paper; required for every published package."
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      }
+    },
+    "python": {
+      "type": "string",
+      "pattern": "^3\\.[0-9]{1,2}$"
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "demo": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "demo": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "repo_url": {
+            "type": "string"
+          },
+          "commit": {
+            "type": "string"
+          },
+          "paper_title": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "name": "tutorial-reference",
+    "tool": "qc_summary",
+    "arguments": {"expr_path": "tests/data/expr.csv"},
+    "required_inputs": ["expr_path"],
+    "expected_subset": {"rows": 12}
+  },
+  {
+    "name": "missing-input",
+    "tool": "qc_summary",
+    "arguments": {"expr_path": "tests/data/absent.csv"},
+    "required_inputs": ["expr_path"],
+    "error_contains": "not a readable file"
+  }
+]

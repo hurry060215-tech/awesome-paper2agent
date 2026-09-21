@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "package_id": "sequence-stats",
+  "package_version": "0.1.0",
+  "name": "Sequence Stats",
+  "summary": "计算 DNA 序列长度与 GC 比例的最小 MCP 示例。",
+  "repo_url": null,
+  "commit": null,
+  "doi": null,
+  "paper_title": null,
+  "tools": [
+    "sequence_stats"
+  ],
+  "python": "3.11",
+  "license": "Apache-2.0",
+  "demo": true
+}

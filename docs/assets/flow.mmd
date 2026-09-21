@@ -1,0 +1,24 @@
+// Source for docs/assets/flow-{en,zh}-{light,dark}.svg
+//
+// Render with Mermaid v11. Three things matter for the output to work as a
+// standalone <img> in a README:
+//   * htmlLabels: false -- pass it to mermaid.initialize(), not only to the init
+//     directive; otherwise the labels land in <foreignObject>, which browsers do
+//     not render inside an SVG that is loaded through <img>.
+//   * one themeVariables set per GitHub theme, background left transparent.
+//   * round coordinates to one decimal before saving; Mermaid emits 15-digit
+//     floats that inflate the file by an order of magnitude.
+//
+// Palettes:
+//   light  primaryColor #f6f8fa  primaryTextColor #1f2328  primaryBorderColor #d0d7de  lineColor #57606a
+//   dark   primaryColor #21262d  primaryTextColor #e6edf3  primaryBorderColor #30363d  lineColor #8b949e
+//
+// English:
+%%{init: {'flowchart': {'nodeSpacing': 16, 'rankSpacing': 16, 'padding': 5, 'diagramPadding': 4}}}%%
+flowchart LR
+    A[Source] --> B[Pull request] --> C[Static checks] --> D[Maintainer review] --> E[ZIP + index] --> F[MCP client]
+
+// 中文版:
+%%{init: {'flowchart': {'nodeSpacing': 16, 'rankSpacing': 16, 'padding': 5, 'diagramPadding': 4}}}%%
+flowchart LR
+    A[公开源码] --> B[Pull Request] --> C[静态校验] --> D[维护者审核] --> E[ZIP + 索引] --> F[MCP 客户端]

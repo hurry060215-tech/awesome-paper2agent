@@ -1,0 +1,47 @@
+name: Static package checks
+
+on: [pull_request, push]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: requirements-dev.txt
+      - name: Install validator only
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - name: Validate metadata and source files without importing packages
+        run: python tools/catalog.py validate
+      - name: Validator tests
+        run: python -m unittest discover -s tests -v
+
+  # Contributors cannot approve their own package, so the approval requirement is
+  # enforced on the default branch rather than on every pull request.
+  release-gate:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: requirements-dev.txt
+      - name: Install validator only
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - name: Every package under packages/ must carry a matching approval
+        run: python tools/catalog.py validate --require-approved

@@ -1,0 +1,9 @@
+# Default owner for this repository.
+*                       @mengxu98
+
+# Trust-sensitive paths. A change here changes what the catalog accepts or publishes,
+# so these files need a maintainer review rather than a contributor one.
+/reviews.json           @mengxu98
+/schema/                @mengxu98
+/tools/                 @mengxu98
+/.github/               @mengxu98
