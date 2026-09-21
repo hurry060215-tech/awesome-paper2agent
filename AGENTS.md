@@ -78,6 +78,19 @@ building a real package end to end.
 4. **An interpreter that cannot install the pins.** Some dependencies set a floor — scanpy 1.12.4
    requires Python 3.12 or newer. The `python` field in `metadata.json` must name an interpreter
    that can install the pinned requirements and run the server.
+5. **A pin that no mirror carries.** The runtime picks a package index by probing mirrors, and they
+   lag by different amounts: measured on one day, `anndata==0.13.4` resolved on the Tsinghua mirror
+   but not on Aliyun, `0.13.3` resolved on neither, and `0.13.2` resolved on all three including
+   upstream PyPI. Pinning the newest patch therefore produces a package that installs on the
+   author's machine and fails on a user's, with the failure landing after review. Prefer a release
+   that has been out for a while, and check the pins against the indexes the product may use:
+
+   ```sh
+   for index in https://mirrors.aliyun.com/pypi/simple \
+                https://pypi.tuna.tsinghua.edu.cn/simple https://pypi.org/simple; do
+     uv pip install --dry-run --python /tmp/probe/bin/python "anndata==0.13.2" --index-url "$index"
+   done
+   ```
 
 ## The validation record
 
