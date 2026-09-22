@@ -196,6 +196,27 @@ class RobustnessTests(unittest.TestCase):
                       'reviewed_by': 'test', 'reviewed_at': '2026-09-21'}])
         self.assertEqual(catalog.validate_all(require_approved=True), 1)
 
+    def test_stale_approval_warns_but_passes_normal_validation(self):
+        meta, data = catalog.archive(self.folder)
+        content = hashlib.sha256(
+            json.dumps(meta, sort_keys=True, separators=(',', ':')).encode() + b'\n' + data).hexdigest()
+        self.ledger([{'package_id': 'sequence-stats', 'package_version': meta['package_version'],
+                      'content_sha256': content, 'submitted_by': 'test-fixture',
+                      'reviewed_by': 'test', 'reviewed_at': '2026-09-21'}])
+        (self.folder / 'USAGE.md').write_text('# changed but statically valid\n', encoding='utf-8')
+        self.assertEqual(catalog.validate_all(require_approved=False), 1)
+
+    def test_stale_approval_still_fails_the_release_gate(self):
+        meta, data = catalog.archive(self.folder)
+        content = hashlib.sha256(
+            json.dumps(meta, sort_keys=True, separators=(',', ':')).encode() + b'\n' + data).hexdigest()
+        self.ledger([{'package_id': 'sequence-stats', 'package_version': meta['package_version'],
+                      'content_sha256': content, 'submitted_by': 'test-fixture',
+                      'reviewed_by': 'test', 'reviewed_at': '2026-09-21'}])
+        (self.folder / 'USAGE.md').write_text('# changed but statically valid\n', encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'Approved content changed'):
+            catalog.validate_all(require_approved=True)
+
     def test_unpinned_or_ranged_requirement_is_rejected(self):
         for line in ('mcp>=1.0', 'mcp', 'git+https://example.com/x.git'):
             (self.folder / 'src/requirements.txt').write_text(line + '\n')

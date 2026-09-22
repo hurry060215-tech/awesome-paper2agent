@@ -236,8 +236,13 @@ def archive(folder, demo=False):
     return meta, data
 
 
-def reviewed_catalog():
-    """Export only content-pinned maintainer approvals. No approvals are created here."""
+def reviewed_catalog(allow_stale=False):
+    """Export content-pinned approvals; optionally skip changed records for PR validation.
+
+    Normal pull-request validation must still inspect changed packages, but an old
+    approval is no longer evidence that the new content is reviewed. Release and
+    reviewed-catalog exports keep the strict default and raise instead.
+    """
     ledger = json.loads(read_text(ROOT / 'reviews.json'))
     if ledger.get('schema_version') != 1 or set(ledger) != {'schema_version', 'approvals'}:
         raise ValueError('Invalid review ledger')
@@ -264,6 +269,9 @@ def reviewed_catalog():
         sha = hashlib.sha256(data).hexdigest()
         content = hashlib.sha256(json.dumps(meta, sort_keys=True, separators=(',', ':')).encode() + b'\n' + data).hexdigest()
         if approval['content_sha256'] != content or approval['package_version'] != meta['package_version']:
+            if allow_stale:
+                print(f'warning: approval for `{package_id}` is stale; review again')
+                continue
             raise ValueError('Approved content changed: review again')
         name = f"{package_id}-{meta['package_version']}-{sha[:12]}.zip"
         outputs[name] = data
@@ -275,7 +283,7 @@ def validate_all(require_approved=False):
     """Check examples and packages. A release additionally requires every package to be approved."""
     for folder in package_dirs('examples'):
         validate(folder, True)
-    approved = {rec['package_id'] for rec in reviewed_catalog()[0]}
+    approved = {rec['package_id'] for rec in reviewed_catalog(allow_stale=not require_approved)[0]}
     packages = list(package_dirs('packages'))
     for folder in packages:
         validate(folder, False)
