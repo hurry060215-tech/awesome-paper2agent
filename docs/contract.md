@@ -68,6 +68,10 @@ An approval means maintainer content review, not security certification or numer
 The release index inherits trust from its controlled publisher; an untrusted index cannot
 establish review merely by containing `review` fields.
 
+During pull-request validation, a package whose content or version no longer matches an old approval
+is reported as pending review so its static contents can still be checked. The strict approval check
+remains enabled for `validate --require-approved`, reviewed exports and release builds.
+
 ## Licensing
 
 Repository contents — schema, validator, workflows and documentation — are Apache-2.0. Each package
