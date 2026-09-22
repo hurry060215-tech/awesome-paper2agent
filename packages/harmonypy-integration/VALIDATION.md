@@ -21,3 +21,6 @@ Generated from a Paper2MCP delivery (`harmonypy`) on 2026-09-21.
 
 - Agreement with numbers in the paper beyond the upstream tracked reference data.
 - Datasets larger than the tracked fixtures, multi-column batch correction, Windows and GPU execution.
+- The 0.1.1 Windows runtime recheck was blocked before MCP startup because the pinned
+  `harmonypy==2.0.2` source build could not find BLAS. Output-path protection was therefore
+  inspected in source but not runtime-exercised in the declared clean environment.
