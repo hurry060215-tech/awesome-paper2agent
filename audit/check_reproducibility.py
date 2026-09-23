@@ -21,6 +21,10 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def checks_pass(result: dict) -> bool:
+    return result["repeat_equal"] and result["eol_equal"]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("package_id", choices=("scanpy-workflow", "scrublet-doublets", "harmonypy-integration"))
@@ -49,7 +53,7 @@ def main() -> int:
         result["crlf_sha256"] = variants["crlf"]
         result["eol_equal"] = variants["lf"] == variants["crlf"]
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0 if result["repeat_equal"] else 1
+    return 0 if checks_pass(result) else 1
 
 
 if __name__ == "__main__":

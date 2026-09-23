@@ -19,6 +19,8 @@ import time
 
 import numpy as np
 
+from mcp_result_fields import result_field
+
 
 async def call_tools(entry: Path, calls: list[dict], root: Path) -> dict:
     from mcp import ClientSession, StdioServerParameters
@@ -42,7 +44,7 @@ async def call_tools(entry: Path, calls: list[dict], root: Path) -> dict:
                 record = {
                     "name": item["name"],
                     "expect_error": bool(item.get("expect_error")),
-                    "is_error": bool(response.isError),
+                    "is_error": bool(result_field(response, "isError", "is_error")),
                     "elapsed_seconds": round(elapsed, 6),
                 }
                 content = []
@@ -50,8 +52,9 @@ async def call_tools(entry: Path, calls: list[dict], root: Path) -> dict:
                     if getattr(block, "type", None) == "text":
                         content.append(block.text)
                 record["text"] = content
-                if response.structuredContent is not None:
-                    record["structured"] = response.structuredContent
+                structured = result_field(response, "structuredContent", "structured_content")
+                if structured is not None:
+                    record["structured"] = structured
                 result["calls"].append(record)
     return result
 

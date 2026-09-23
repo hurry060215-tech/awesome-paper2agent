@@ -53,7 +53,25 @@ changed. `reviews.json` was not edited.
   passed the repaired MCP `qc_metrics` tool (13 mitochondrial genes; median
   2,197 total counts; one cell above 20% mitochondrial counts).
 
-The release gate remains intentionally blocked because the three package
-versions/content changed and `reviews.json` still contains the old maintainer
-approvals. This is the required “tested locally, pending maintainer review”
-state, not an approval workaround.
+At the original Windows post-fix stage, the release gate remained intentionally
+blocked because the three package versions/content changed and `reviews.json`
+still contained the old maintainer approvals. That was the required “tested
+locally, pending maintainer review” state, not an approval workaround.
+
+## Maintainer follow-up on the PR branch (2026-09-23)
+
+- On macOS arm64, Python 3.12.13 environments were rebuilt from each package's
+  pinned requirements. The three packages were archived, extracted and run over
+  MCP stdio with credentials removed from the process environment.
+- Scanpy exposed 7 tools and passed 10 success/rejection calls; Scrublet exposed
+  4 tools and passed 7; harmonypy exposed 2 tools and passed 6. All source inputs
+  retained their SHA256 values. The Harmony run required a fix to the audit
+  harness for FastMCP 4's snake_case result fields; that fix is included in
+  this PR.
+- The 78 repository unit tests, ordinary catalog validation, three LF/CRLF
+  archive comparisons, and the explicit Scanpy marker-layer reference check
+  passed locally. Strict approval validation first rejected the three stale
+  approvals as expected, then passed after the maintainer recorded final
+  content hashes in `reviews.json` on this PR branch.
+- These bounded checks do not reproduce paper figures, establish numerical
+  agreement with the paper, or test OmicOS installation end to end.

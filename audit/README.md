@@ -7,20 +7,24 @@ entry point over MCP stdio, enumerate tools, call every declared tool on a small
 input, and include relevant rejection calls. The harness returns non-zero when
 an expected success/error state differs.
 
-The fixed checkout used for this run is `3315ce749cff8cc935ff966586296f21ca0a5819`.
-The package environments were Python 3.12.13 virtual environments rebuilt from
-each package's pinned `src/requirements.txt`.
+`audit/BASELINE.md` records the original Windows audit at commit
+`3315ce749cff8cc935ff966586296f21ca0a5819`; it is historical evidence,
+not the current pull-request head. The commands below target the current
+Scanpy 0.1.2 and Scrublet 0.1.2 package versions. Rebuild each Python 3.12
+environment from that package's pinned `src/requirements.txt` before running
+them. The harness accepts both the SDK's camelCase result fields and FastMCP
+4's snake_case result fields.
 
 Example Windows commands from the repository root:
 
 ```powershell
-$audit = "$env:TEMP\paper2agent-audit-3315ce7"
-$scan = "$env:TEMP\paper2agent-envs\scanpy-0.1.1\Scripts\python.exe"
+$audit = "$env:TEMP\paper2agent-audit-pr11"
+$scan = "$env:TEMP\paper2agent-envs\scanpy-0.1.2\Scripts\python.exe"
 & $scan audit/run_mcp_checks.py --package scanpy `
   --entry packages/scanpy-workflow/src/scanpy_workflow_mcp.py `
   --work "$audit\scanpy" --report "$audit\scanpy.json"
 
-$scrub = "$env:TEMP\paper2agent-envs\scrublet-0.1.1\Scripts\python.exe"
+$scrub = "$env:TEMP\paper2agent-envs\scrublet-0.1.2\Scripts\python.exe"
 & $scrub audit/run_mcp_checks.py --package scrublet `
   --entry packages/scrublet-doublets/src/scrublet_doublets_mcp.py `
   --work "$audit\scrublet" --report "$audit\scrublet.json"
